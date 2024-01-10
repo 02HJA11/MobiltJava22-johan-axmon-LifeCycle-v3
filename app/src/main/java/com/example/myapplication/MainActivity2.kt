@@ -14,6 +14,7 @@ private lateinit var sharedPreferences: SharedPreferences
 
 
 class MainActivity2 : AppCompatActivity() {
+    val logout = Intent(this@MainActivity2, MainActivity::class.java)
 
 
     private lateinit var bottomNav: BottomNavigationView
@@ -32,13 +33,12 @@ class MainActivity2 : AppCompatActivity() {
             true
         }
     }
-
+//made following a guide
     private fun navigateToActivity(itemId: Int) {
         val intent = when (itemId) {
             R.id.home -> Intent(this, MainActivity2::class.java)
             R.id.gender -> Intent(this, GenderActivity::class.java)
             R.id.information -> Intent(this, PersonalActivity::class.java)
-            R.id.jokes -> Intent(this, JokesActivity::class.java)
             R.id.logout -> {
                 logOut()
                 null
@@ -47,20 +47,13 @@ class MainActivity2 : AppCompatActivity() {
         }
         if (intent != null) {
             startActivity(intent)
-
         }
-
     }
 
     private fun logOut() {
-
         sharedPreferences = getSharedPreferences("Myprefs", Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("isLoggedIn", false).apply()
-        val intent = Intent(this@MainActivity2, MainActivity::class.java)
-        startActivity(intent)
+        startActivity(logout)
         finish()
     }
-    override fun onBackPressed() {
-
-        Toast.makeText(applicationContext, "Back Button Pressed", Toast.LENGTH_SHORT).show()
-    }}
+   }

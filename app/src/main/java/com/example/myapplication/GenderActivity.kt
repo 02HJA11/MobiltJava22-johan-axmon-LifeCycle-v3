@@ -9,57 +9,42 @@ import android.widget.RadioButton
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-private lateinit var sharedPreferences: SharedPreferences
+private lateinit var sp: SharedPreferences
 
 class GenderActivity : AppCompatActivity() {
 
     private lateinit var bottomNav: BottomNavigationView
-
+    val logout = Intent(this@GenderActivity, MainActivity::class.java)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gender)
-
-        sharedPreferences = getSharedPreferences("My Prefs", Context.MODE_PRIVATE)
-        val radioMale = findViewById<RadioButton>(R.id.radioButtonMale)
-        val radioFemale = findViewById<RadioButton>(R.id.radioButtonFemale)
-        val radioOther = findViewById<RadioButton>(R.id.radioButtonOther)
+        sp = getSharedPreferences("My Prefs", Context.MODE_PRIVATE)
+        val rm = findViewById<RadioButton>(R.id.radioButtonMale)
+        val rf = findViewById<RadioButton>(R.id.radioButtonFemale)
+        val ro = findViewById<RadioButton>(R.id.radioButtonOther)
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.selectedItemId = R.id.gender
 
-        val isMaleChecked = sharedPreferences.getBoolean("isMaleChecked", false)
-        val isFemaleChecked = sharedPreferences.getBoolean("isFemaleChecked", false)
-        val isOtherchecked = sharedPreferences.getBoolean("isOtherChecked", false)
-
-
-        radioMale.isChecked = isMaleChecked
-        radioFemale.isChecked = isFemaleChecked
-        radioOther.isChecked = isOtherchecked
-
-
-
-
-        radioMale.setOnClickListener {
-            sharedPreferences.edit().putBoolean("isMaleChecked", true).apply()
-            sharedPreferences.edit().putBoolean("isFemaleChecked", false).apply()
-            sharedPreferences.edit().putBoolean("isOtherChecked", false).apply()
-            Toast.makeText(this@GenderActivity, "You da man", Toast.LENGTH_SHORT).show()
+        val imc = sp.getBoolean("imc", false)
+        val ifc = sp.getBoolean("ifc", false)
+        val ioc = sp.getBoolean("ioc", false)
+        rm.isChecked = imc
+        rf.isChecked = ifc
+        ro.isChecked = ioc
+        rm.setOnClickListener {
+            sp.edit().putBoolean("imc", true).apply()
+            sp.edit().putBoolean("ifc", false).apply()
+            sp.edit().putBoolean("ioc", false).apply()
         }
-
-
-        radioFemale.setOnClickListener {
-            sharedPreferences.edit().putBoolean("isFemaleChecked", true).apply()
-            sharedPreferences.edit().putBoolean("isMaleChecked", false).apply()
-            sharedPreferences.edit().putBoolean("isOtherChecked", false).apply()
-            Toast.makeText(this@GenderActivity, "Yousa Woman", Toast.LENGTH_SHORT).show()
+        rf.setOnClickListener {
+            sp.edit().putBoolean("ifc", true).apply()
+            sp.edit().putBoolean("imc", false).apply()
+            sp.edit().putBoolean("ioc", false).apply()
         }
-
-
-        radioOther.setOnClickListener {
-            sharedPreferences.edit().putBoolean("isOtherChecked", true).apply()
-            sharedPreferences.edit().putBoolean("isFemaleChecked", false).apply()
-            sharedPreferences.edit().putBoolean("isMaleChecked", false).apply()
-            Toast.makeText(this@GenderActivity, "You are other", Toast.LENGTH_SHORT).show()
-
+        ro.setOnClickListener {
+            sp.edit().putBoolean("ioc", true).apply()
+            sp.edit().putBoolean("ifc", false).apply()
+            sp.edit().putBoolean("imc", false).apply()
         }
 
 
@@ -72,37 +57,21 @@ class GenderActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        val editor = sharedPreferences.edit()
-        val radioMale = findViewById<RadioButton>(R.id.radioButtonMale)
-        val radioFemale = findViewById<RadioButton>(R.id.radioButtonFemale)
-        val radioOther = findViewById<RadioButton>(R.id.radioButtonOther)
-        editor.putBoolean("isMalechecked", radioMale.isChecked)
-        editor.putBoolean("isFemalechecked", radioFemale.isChecked)
-        editor.putBoolean("isOtherchecked", radioOther.isChecked)
+        val editor = sp.edit()
+        val rm = findViewById<RadioButton>(R.id.radioButtonMale)
+        val rf = findViewById<RadioButton>(R.id.radioButtonFemale)
+        val ro = findViewById<RadioButton>(R.id.radioButtonOther)
+        editor.putBoolean("imc", rm.isChecked)
+        editor.putBoolean("ifc", rf.isChecked)
+        editor.putBoolean("ioc", ro.isChecked)
         editor.apply()
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        val editor = sharedPreferences.edit()
-        val radioMale = findViewById<RadioButton>(R.id.radioButtonMale)
-        val radioFemale = findViewById<RadioButton>(R.id.radioButtonFemale)
-        val radioOther = findViewById<RadioButton>(R.id.radioButtonOther)
-        editor.putBoolean("isMalechecked", radioMale.isChecked)
-        editor.putBoolean("isFemalechecked", radioFemale.isChecked)
-        editor.putBoolean("isOtherchecked", radioOther.isChecked)
-        editor.apply()
-    }
-
-
-
-
+    //made following a guide , essentially the whole nav menu is.
     private fun navigateToActivity(itemId: Int) {
         val intent = when (itemId) {
             R.id.home -> Intent(this, MainActivity2::class.java)
             R.id.gender -> Intent(this, GenderActivity::class.java)
             R.id.information -> Intent(this, PersonalActivity::class.java)
-            R.id.jokes -> Intent(this, JokesActivity::class.java)
             R.id.logout -> {
                 logOut()
                 null
@@ -111,17 +80,12 @@ class GenderActivity : AppCompatActivity() {
         }
         if (intent != null) {
             startActivity(intent)
-
         }
 
     }
 
     private fun logOut() {
-
-        sharedPreferences = getSharedPreferences("Myprefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean("isLoggedIn", false).apply()
-        val intent = Intent(this@GenderActivity, MainActivity::class.java)
-        startActivity(intent)
+        startActivity(logout)
         finish()
     }
 
